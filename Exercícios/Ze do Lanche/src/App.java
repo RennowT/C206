@@ -12,7 +12,7 @@ public class App {
 
         scanner.close();
 
-        int sumOfBurguersConsumed = 0;
+        float sumOfBurguersConsumed = 0f;
 
         for (int i : consumedBurgers) {
             sumOfBurguersConsumed += i;
