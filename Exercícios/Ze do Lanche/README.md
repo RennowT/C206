@@ -1,18 +1,44 @@
-## Getting Started
+# Zé do Lanche App
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+## Descrição
+O aplicativo "Zé do Lanche" permite que o usuário registre a quantidade de hambúrgueres consumidos em um determinado período e fornece informações como o número total de hambúrgueres consumidos e a média de hambúrgueres por registro.
 
-## Folder Structure
+## Como Usar
+1. Execute o aplicativo.
+2. Insira a quantidade de hambúrgueres consumidos quando solicitado.
+3. O aplicativo calculará o número total de hambúrgueres consumidos e a média.
 
-The workspace contains two folders by default, where:
+## Funcionalidades
+- Registra a quantidade de hambúrgueres consumidos.
+- Calcula o número total de hambúrgueres consumidos.
+- Calcula a média de hambúrgueres consumidos.
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+## Exemplo de Uso
+```java
+import java.util.Scanner;
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+public class App {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        int[] consumedBurgers = new int[3];
+        
+        for (int i = 0; i < consumedBurgers.length; i++) {
+            System.out.println("Digite a quantidade de hambúrgueres consumidos no registro " + (i + 1) + ": ");
+            consumedBurgers[i] = scanner.nextInt();
+        }
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+        scanner.close();
 
-## Dependency Management
+        int sumOfBurgersConsumed = 0;
 
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+        for (int i : consumedBurgers) {
+            sumOfBurgersConsumed += i;
+        }
+
+        System.out.println("O número total de hambúrgueres consumidos foi de " + sumOfBurgersConsumed);
+
+        float averageBurgerConsumed = (float) sumOfBurgersConsumed / consumedBurgers.length;
+        System.out.println("A média de hambúrgueres consumidos foi de " + averageBurgerConsumed);
+    }
+}
