@@ -46,7 +46,11 @@ public class Zumbi {
         if (vida >= quantia) {
             vida -= quantia;
             zumbiAlvo.recebeVida(quantia);
+            System.out.println("Vida Transferida!");
+            return;
         }
+
+        System.out.println("Quantia a ser transferida superior a vida atual!");
     }
 }
 
