@@ -29,5 +29,24 @@ public class Zumbi {
         System.out.println("Idade: " + idade);
         System.out.println("Vida: " + vida);
     }
+
+    public double getVida() {
+        return vida;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void recebeVida(double quantia) {
+        vida += quantia;
+    }
+
+    public void transfereVida(Zumbi zumbiAlvo, double quantia) {
+        if (vida >= quantia) {
+            vida -= quantia;
+            zumbiAlvo.recebeVida(quantia);
+        }
+    }
 }
 
