@@ -56,8 +56,10 @@ public class CampoMinado {
                 imprimirTabuleiro();
                 break;
             } else if (!minas[linha][coluna]) {
-                tabuleiro[linha][coluna] = '0';
-            } else if (venceu()) {
+                tabuleiro[linha][coluna] = '+';
+            }
+
+            if (venceu()) {
                 System.out.println("Você venceu!");
                 imprimirTabuleiro();
                 break;
@@ -69,7 +71,7 @@ public class CampoMinado {
     private boolean venceu() {
         for (int i = 0; i < tamanho; i++) {
             for (int j = 0; j < tamanho; j++) {
-                if (!minas[i][j]) {
+                if (!minas[i][j] && tabuleiro[i][j] != '+') {
                     return false;
                 }
             }
