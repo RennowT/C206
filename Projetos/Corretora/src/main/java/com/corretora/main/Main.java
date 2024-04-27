@@ -103,10 +103,10 @@ public class Main {
 
         System.out.print("Digite a area do imovel: ");
         double areaImovel = sc.nextDouble();
-        sc.nextLine();
 
         System.out.print("Digite o valor do imovel: ");
-        String valorImovel = sc.nextLine();
+        BigDecimal valorImovel = sc.nextBigDecimal();
+        sc.nextLine();
 
         System.out.print("Digite o tipo de imovel: ");
         String tipoImovel = sc.nextLine();

@@ -1,5 +1,7 @@
 package com.corretora.model;
 
+import java.math.BigDecimal;
+
 public class Imovel {
     private String codigo;
     private String titulo;
@@ -9,7 +11,7 @@ public class Imovel {
     private int numeroDeSuites;
     private int numeroDeVagasNaGaragem;
     private double area;
-    private String valor;
+    private BigDecimal valor;
     private String tipo;
     private String finalidade;
     private Endereco endereco;
@@ -24,7 +26,7 @@ public class Imovel {
             int numeroDeSuites,
             int numeroDeVagasNaGaragem,
             double area,
-            String valor,
+            BigDecimal valor,
             String tipo,
             String finalidade,
             Endereco endereco,
@@ -96,7 +98,7 @@ public class Imovel {
         return area;
     }
 
-    public String getValor() {
+    public BigDecimal getValor() {
         return valor;
     }
 

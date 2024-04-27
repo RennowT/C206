@@ -20,7 +20,7 @@ public class ImovelDAO extends ConexaoMySQL<Imovel> {
         pst.setInt(6, imovel.getNumeroDeSuites());
         pst.setInt(7, imovel.getNumeroDeVagasNaGaragem());
         pst.setDouble(8, imovel.getArea());
-        pst.setString(9, imovel.getValor());
+        pst.setBigDecimal(9, imovel.getValor());
         pst.setString(10, imovel.getTipo());
         pst.setString(11, imovel.getFinalidade());
         pst.setString(12, imovel.getEndereco().getLogradouro());
@@ -66,7 +66,7 @@ public class ImovelDAO extends ConexaoMySQL<Imovel> {
                 resultSet.getInt("numeroDeSuites"),
                 resultSet.getInt("numeroDeVagasNaGaragem"),
                 resultSet.getDouble("area"),
-                resultSet.getString("valor"),
+                resultSet.getBigDecimal("valor"),
                 resultSet.getString("tipo"),
                 resultSet.getString("finalidade"),
                 endereco,
