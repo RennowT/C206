@@ -1,32 +1,31 @@
 package com.corretora.model;
 
 public class Corretor {
-    private int id;
+    private String creci;
     private String cpf;
     private String nome;
     private String telefone;
     private String email;
-    private double taxaDeComissao;
+    private String hashUsuario;
+    private double taxaDeComissao = 0.05f;
 
-    public Corretor(String cpf, String nome, String telefone, String email, double taxaDeComissao) {
+    public Corretor(String creci, String cpf, String nome, String telefone, String email, String hashUsuario) {
+        this.creci = creci;
         this.cpf = cpf;
         this.nome = nome;
         this.telefone = telefone;
         this.email = email;
-        this.taxaDeComissao = taxaDeComissao;
+        this.hashUsuario = hashUsuario;
     }
 
-    public Corretor(int id, String cpf, String nome, String telefone, String email, double taxaDeComissao) {
-        this.id = id;
+    public Corretor(String creci, String cpf, String nome, String telefone, String email, String hashUsuario, double taxaDeComissao) {
+        this.creci = creci;
         this.cpf = cpf;
         this.nome = nome;
         this.telefone = telefone;
         this.email = email;
+        this.hashUsuario = hashUsuario;
         this.taxaDeComissao = taxaDeComissao;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getCpf() {
@@ -43,6 +42,14 @@ public class Corretor {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getCreci() {
+        return creci;
+    }
+
+    public String getHashUsuario() {
+        return hashUsuario;
     }
 
     public double getTaxaDeComissao() {

@@ -1,4 +1,4 @@
-package com.corretora.model;
+package com.corretora.model.Endereco;
 
 public class Endereco {
     private String logradouro;
@@ -25,6 +25,35 @@ public class Endereco {
         this.cidade = cidade;
         this.estado = estado;
         this.cep = cep;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        if (!logradouro.trim().isEmpty()) {
+            sb.append(logradouro);
+        }
+        if (!numero.trim().isEmpty()) {
+            sb.append(", nº").append(numero);
+        }
+        if (!complemento.trim().isEmpty()) {
+            sb.append(", ").append(complemento);
+        }
+        if (!bairro.trim().isEmpty()) {
+            sb.append(", Bairro ").append(bairro);
+        }
+        if (!cidade.trim().isEmpty()) {
+            sb.append(", ").append(cidade);
+        }
+        if (!estado.trim().isEmpty()) {
+            sb.append(", ").append(estado);
+        }
+        if (!cep.trim().isEmpty()) {
+            sb.append(", ").append(cep);
+        }
+
+        return sb.toString();
     }
 
     public String getLogradouro() {

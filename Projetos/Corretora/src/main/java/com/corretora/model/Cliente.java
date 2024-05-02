@@ -6,19 +6,22 @@ public class Cliente {
     private int id;
     private String nome;
     private String email;
+    private String hashUsuario;
     private String telefone;
     private ArrayList<Avaliacao> listaDeAvaliacoes;
 
-    public Cliente(String nome, String email, String telefone) {
+    public Cliente(String nome, String email, String hashUsuario, String telefone) {
         this.nome = nome;
         this.email = email;
+        this.hashUsuario = hashUsuario;
         this.telefone = telefone;
     }
 
-    public Cliente(int id, String nome, String email, String telefone) {
+    public Cliente(int id, String nome, String email, String hashUsuario, String telefone) {
         this.id = id;
         this.nome = nome;
         this.email = email;
+        this.hashUsuario = hashUsuario;
         this.telefone = telefone;
     }
 
@@ -32,6 +35,10 @@ public class Cliente {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getHashUsuario() {
+        return hashUsuario;
     }
 
     public String getTelefone() {

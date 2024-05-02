@@ -21,6 +21,7 @@ USE `Corretora` ;
 CREATE TABLE IF NOT EXISTS `Corretora`.`Cliente` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `nome` VARCHAR(100) NOT NULL,
+  `hashUsuario` VARCHAR(256) NOT NULL,
   `email` VARCHAR(256) NOT NULL,
   `telefone` VARCHAR(20) NOT NULL,
   PRIMARY KEY (`id`))
@@ -30,9 +31,9 @@ ENGINE = InnoDB;
 -- Table `Corretora`.`Imovel`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Corretora`.`Imovel` (
-  `codigo` VARCHAR(20) NOT NULL,
+  `codigo` INT NOT NULL AUTO_INCREMENT,
   `titulo` VARCHAR(100) NOT NULL,
-  `descricao` VARCHAR(1000) NOT NULL,
+  `descricao` VARCHAR(5000) NOT NULL,
   `numeroDeQuartos` INT NOT NULL,
   `numeroDeBanheiros` INT NOT NULL,
   `numeroDeSuites` INT NOT NULL,
@@ -48,6 +49,7 @@ CREATE TABLE IF NOT EXISTS `Corretora`.`Imovel` (
   `cidade` VARCHAR(50) NOT NULL,
   `estado` VARCHAR(50) NOT NULL,
   `cep` VARCHAR(10) NOT NULL,
+  `exibir` BOOLEAN NOT NULL,
   `Cliente_id` INT NOT NULL,
   PRIMARY KEY (`codigo`, `Cliente_id`),
   INDEX `fk_Imovel_Cliente1_idx` (`Cliente_id` ASC) VISIBLE,
@@ -63,13 +65,14 @@ ENGINE = InnoDB;
 -- Table `Corretora`.`Corretor`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Corretora`.`Corretor` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `cpf` VARCHAR(11) NOT NULL,
+  `creci` VARCHAR(20) NOT NULL,
+  `cpf` VARCHAR(14) NOT NULL,
   `nome` VARCHAR(100) NOT NULL,
+  `hashUsuario` VARCHAR(256) NOT NULL,
   `telefone` VARCHAR(20) NOT NULL,
   `email` VARCHAR(256) NOT NULL,
-  `taxaDeComissao` DECIMAL(2) NOT NULL,
-  PRIMARY KEY (`id`))
+  `taxaDeComissao` DECIMAL(3,3) NOT NULL,
+  PRIMARY KEY (`creci`))
 ENGINE = InnoDB;
 
 
@@ -77,7 +80,7 @@ ENGINE = InnoDB;
 -- Table `Corretora`.`Avaliacao`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Corretora`.`Avaliacao` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `estrelas` INT NOT NULL,
   `comentario` LONGTEXT NOT NULL,
   `Cliente_id` INT NOT NULL,
@@ -99,13 +102,13 @@ CREATE TABLE IF NOT EXISTS `Corretora`.`Transacao` (
   `dataDaTransacao` DATETIME NOT NULL,
   `tipo` VARCHAR(50) NOT NULL,
   `valor` DECIMAL(10, 2) NOT NULL,
-  `Imovel_codigo` VARCHAR(20) NOT NULL,
+  `Imovel_codigo` INT NOT NULL,
   `Cliente_id` INT NOT NULL,
-  `Corretor_id` INT NOT NULL,
-  PRIMARY KEY (`id`, `Imovel_codigo`, `Cliente_id`, `Corretor_id`),
+  `Corretor_creci` VARCHAR(20) NOT NULL,
+  PRIMARY KEY (`id`, `Imovel_codigo`, `Cliente_id`, `Corretor_creci`),
   INDEX `fk_Transacao_Imovel1_idx` (`Imovel_codigo` ASC) VISIBLE,
   INDEX `fk_Transacao_Cliente1_idx` (`Cliente_id` ASC) VISIBLE,
-  INDEX `fk_Transacao_Corretor1_idx` (`Corretor_id` ASC) VISIBLE,
+  INDEX `fk_Transacao_Corretor1_idx` (`Corretor_creci` ASC) VISIBLE,
   CONSTRAINT `fk_Transacao_Imovel1`
     FOREIGN KEY (`Imovel_codigo`)
     REFERENCES `Corretora`.`Imovel` (`codigo`)
@@ -117,8 +120,8 @@ CREATE TABLE IF NOT EXISTS `Corretora`.`Transacao` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Transacao_Corretor1`
-    FOREIGN KEY (`Corretor_id`)
-    REFERENCES `Corretora`.`Corretor` (`id`)
+    FOREIGN KEY (`Corretor_creci`)
+    REFERENCES `Corretora`.`Corretor` (`creci`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

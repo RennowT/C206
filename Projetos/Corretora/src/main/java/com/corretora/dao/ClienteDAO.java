@@ -12,12 +12,13 @@ public class ClienteDAO extends ConexaoMySQL<Cliente> {
     protected void setInsertValues(PreparedStatement pst, Cliente cliente) throws SQLException {
         pst.setString(1, cliente.getNome());
         pst.setString(2, cliente.getEmail());
-        pst.setString(3, cliente.getTelefone());
+        pst.setString(3, cliente.getHashUsuario());
+        pst.setString(4, cliente.getTelefone());
     }
 
     @Override
     protected String buildInsertQuery() {
-        return "INSERT INTO cliente (nome, email, telefone) VALUES (?,?,?)";
+        return "INSERT INTO cliente (nome, email, hashUsuario, telefone) VALUES (?,?,?,?)";
     }
 
     @Override
@@ -31,6 +32,7 @@ public class ClienteDAO extends ConexaoMySQL<Cliente> {
                 resultSet.getInt("id"),
                 resultSet.getString("nome"),
                 resultSet.getString("email"),
+                resultSet.getString("hashUsuario"),
                 resultSet.getString("telefone")
         );
     }
@@ -40,27 +42,12 @@ public class ClienteDAO extends ConexaoMySQL<Cliente> {
         return "SELECT * FROM cliente WHERE " + campo + " = ?";
     }
 
-    public boolean verificarCliente(String email) {
+    public boolean verificarEmailCadastrado(String email) {
         connect();
 
         boolean sucesso = false;
         String sql = "SELECT COUNT(*) AS email_count FROM cliente WHERE email = ?";
 
-        try {
-            pst = connection.prepareStatement(sql);
-            pst.setString(1, email);
-            resultSet = pst.executeQuery();
-
-            resultSet.next();
-            int count = resultSet.getInt("email_count");
-            sucesso = count > 0;
-
-        } catch (SQLException e) {
-            System.out.println("Erro ao executar SQL: " + e.getMessage());
-        } finally {
-            closeResources();
-        }
-
-        return sucesso;
+        return verificaEmailNoBD(sql, email);
     }
 }

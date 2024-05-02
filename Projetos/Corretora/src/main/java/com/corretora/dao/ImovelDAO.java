@@ -1,18 +1,18 @@
 package com.corretora.dao;
 
 import com.corretora.conexao.ConexaoMySQL;
-import com.corretora.model.Endereco;
-import com.corretora.model.Imovel;
+import com.corretora.model.Endereco.Endereco;
+import com.corretora.model.imovel.Imovel;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class ImovelDAO extends ConexaoMySQL<Imovel> {
 
     @Override
     protected void setInsertValues(PreparedStatement pst, Imovel imovel) throws SQLException {
-        pst.setString(1, imovel.getCodigo());
         pst.setString(2, imovel.getTitulo());
         pst.setString(3, imovel.getDescricao());
         pst.setInt(4, imovel.getNumeroDeQuartos());
@@ -30,14 +30,15 @@ public class ImovelDAO extends ConexaoMySQL<Imovel> {
         pst.setString(16, imovel.getEndereco().getCidade());
         pst.setString(17, imovel.getEndereco().getEstado());
         pst.setString(18, imovel.getEndereco().getCep());
+        pst.setBoolean(18, imovel.isExibir());
         pst.setInt(19, imovel.getIdCliente());
     }
 
     @Override
     protected String buildInsertQuery() {
-        return "INSERT INTO imovel (codigo, titulo, descricao, numeroDeQuartos, numeroDeBanheiros, " +
+        return "INSERT INTO imovel (titulo, descricao, numeroDeQuartos, numeroDeBanheiros, " +
                 "numeroDeSuites, numeroDeVagasNaGaragem, area, valor, tipo, finalidade, logradouro, numero, " +
-                "complemento, bairro, cidade, estado, cep, Cliente_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                "complemento, bairro, cidade, estado, cep, exibir, Cliente_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     }
 
     @Override
@@ -58,7 +59,7 @@ public class ImovelDAO extends ConexaoMySQL<Imovel> {
         );
 
         return new Imovel(
-                resultSet.getString("codigo"),
+                resultSet.getInt("codigo"),
                 resultSet.getString("titulo"),
                 resultSet.getString("descricao"),
                 resultSet.getInt("numeroDeQuartos"),
@@ -70,6 +71,7 @@ public class ImovelDAO extends ConexaoMySQL<Imovel> {
                 resultSet.getString("tipo"),
                 resultSet.getString("finalidade"),
                 endereco,
+                resultSet.getBoolean("exibir"),
                 resultSet.getInt("Cliente_id")
         );
     }
@@ -79,7 +81,7 @@ public class ImovelDAO extends ConexaoMySQL<Imovel> {
         return "SELECT * FROM imovel WHERE " + campo + " = ?";
     }
 
-    public boolean verificarImovel(String codigoImovel) {
+    public boolean verificarImovel(int codigoImovel) {
         connect();
 
         boolean sucesso = false;
@@ -87,7 +89,7 @@ public class ImovelDAO extends ConexaoMySQL<Imovel> {
 
         try {
             pst = connection.prepareStatement(sql);
-            pst.setString(1, codigoImovel);
+            pst.setInt(1, codigoImovel);
             resultSet = pst.executeQuery();
 
             resultSet.next();
@@ -101,5 +103,15 @@ public class ImovelDAO extends ConexaoMySQL<Imovel> {
         }
 
         return sucesso;
+    }
+
+    public boolean atualizarExibicao(int codigoImovel) {
+        connect();
+
+        List<Imovel> imovels = selecionarPor("codigo", String.valueOf(codigoImovel));
+        Imovel imovel = imovels.get(0);
+
+        boolean sucesso = false;
+        String sql = "UPDATE ";
     }
 }

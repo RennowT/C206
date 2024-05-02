@@ -109,4 +109,23 @@ public abstract class ConexaoMySQL<T> {
 
     protected abstract String buildSelectQuery(String campo);
 
+    public boolean verificaEmailNoBD(String email, String sql) {
+        boolean sucesso = false;
+        try {
+            pst = connection.prepareStatement(sql);
+            pst.setString(1, email);
+            resultSet = pst.executeQuery();
+
+            resultSet.next();
+            int count = resultSet.getInt("email_count");
+            sucesso = count > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao executar SQL: " + e.getMessage());
+        } finally {
+            closeResources();
+        }
+
+        return sucesso;
+    }
 }
