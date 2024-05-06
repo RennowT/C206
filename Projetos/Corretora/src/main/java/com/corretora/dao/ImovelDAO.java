@@ -1,8 +1,8 @@
 package com.corretora.dao;
 
 import com.corretora.conexao.ConexaoMySQL;
-import com.corretora.model.Endereco.Endereco;
-import com.corretora.model.imovel.Imovel;
+import com.corretora.model.imovel.Endereco;
+import com.corretora.model.Imovel;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -79,6 +79,11 @@ public class ImovelDAO extends ConexaoMySQL<Imovel> {
     @Override
     protected String buildSelectQuery(String campo) {
         return "SELECT * FROM imovel WHERE " + campo + " = ?";
+    }
+
+    @Override
+    protected String buildCountQuery(String campo) {
+        return "";
     }
 
     public boolean verificarImovel(int codigoImovel) {

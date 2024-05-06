@@ -1,4 +1,4 @@
-package com.corretora.model.Endereco;
+package com.corretora.model.imovel;
 
 public class Endereco {
     private String logradouro;

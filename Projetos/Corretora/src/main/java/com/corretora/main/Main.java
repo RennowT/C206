@@ -1,12 +1,12 @@
 package com.corretora.main;
 
-import com.corretora.dao.ClienteDAO;
-import com.corretora.dao.CorretorDAO;
+import com.corretora.dao.usuario.ClienteDAO;
+import com.corretora.dao.usuario.CorretorDAO;
 import com.corretora.dao.ImovelDAO;
-import com.corretora.model.Cliente;
-import com.corretora.model.Corretor;
-import com.corretora.model.Endereco.Endereco;
-import com.corretora.model.imovel.Imovel;
+import com.corretora.model.user.Cliente;
+import com.corretora.model.user.Corretor;
+import com.corretora.model.imovel.Endereco;
+import com.corretora.model.Imovel;
 import com.corretora.model.SHA;
 import com.corretora.model.inputValidator.*;
 import com.corretora.model.seletor.EstadoSeletor;
@@ -125,26 +125,28 @@ public class Main {
 
     private static void registrarNovoCorretor(Scanner sc) {
         sc.nextLine();
-        String creci = obterCreci(sc);
+
+        String request = "CRECI (máximo de 20 caracteres): ";
+        String creci = maxLengthValidator(sc, request, 20);
+
         String nomeCorretor = obterNome(sc);
         String cpf = obterCpf(sc);
         String telefone = obterTelefone(sc);
         String email = obterEmail(sc);
         String senha = obterSenha(sc);
 
-        CorretorDAO corretorDAO = new CorretorDAO();
-        if (corretorDAO.verificarCreciCadastrado(creci)) {
+        String hashUsuario = gerarHashUsuario(email, senha);
+        Corretor corretor = new Corretor(creci, cpf, nomeCorretor, telefone, email, hashUsuario);
+
+        if (corretor.verificarCRECI(creci)) {
             System.out.println("║ ║ ║   >CRECI já cadastrado. Faça login ou entre em contato.");
             return;
-        } else if (corretorDAO.verificarEmailCadastrado(email)) {
+        } else if (corretor.verificarEmailCadastrado(email)) {
             System.out.println("║ ║ ║   >Corretor já cadastrato. Faça login ou cadastre-se com um novo e-mail.");
             return;
         }
 
-        String hashUsuario = gerarHashUsuario(email, senha);
-        Corretor corretor = new Corretor(creci, cpf, nomeCorretor, telefone, email, hashUsuario);
-
-        if (corretorDAO.inserir(corretor)) {
+        if (corretor.inserir()) {
             System.out.println("║ ║ ║   Corretor cadastrado com sucesso.");
             return;
         }
@@ -230,11 +232,6 @@ public class Main {
         }
     }
 
-    private static String obterCreci(Scanner sc) {
-        MaxLengthValidator validator = new MaxLengthValidator("CRECI (máximo de 20 caracteres): ", 20);
-        return validator.validateInput(sc);
-    }
-
     private static void exibirSubMenuLoginCadastro() {
         System.out.println("║ ║   1. Fazer Login");
         System.out.println("║ ║   2. Cadastrar-se");
@@ -285,32 +282,26 @@ public class Main {
     }
 
     private static void registrarNovoCliente(Scanner sc) {
-        String nomeCliente = obterNome(sc);
-        String emailCliente = obterEmail(sc);
-        String senhaCliente = obterSenha(sc);
-        String telefoneCliente = obterTelefone(sc);
+        String nome = obterNome(sc);
+        String email = obterEmail(sc);
+        String senha = obterSenha(sc);
+        String hashUsuario = gerarHashUsuario(email, senha);
+        String telefone = obterTelefone(sc);
 
-        ClienteDAO clienteDAO = new ClienteDAO();
-        if (clienteDAO.verificarEmailCadastrado(emailCliente)) {
+        Cliente cliente = new Cliente(nome, email, hashUsuario, telefone);
+        if (cliente.verificarEmailCadastrado(email)) {
             System.out.println("║ ║ ║   >Usuário já cadastrato. Faça login ou cadastre-se com um novo e-mail.");
             return;
         }
-
-        String hashUsuario = gerarHashUsuario(emailCliente, senhaCliente);
-
-        Cliente cliente = new Cliente(nomeCliente, emailCliente, hashUsuario, telefoneCliente);
-        clienteDAO.inserir(cliente);
 
         System.out.println("║ ║ ║   Usuário cadastrado com sucesso.");
     }
 
     private static String obterTelefone(Scanner sc) {
-        RegexValidator regexValidator = new RegexValidator(
-                "Insira seu Telefone (formato +XX (XX) 9XXXX-XXXX): ",
-                "^\\+\\d{2}\\s\\(\\d{2}\\)\\s9\\d{4}-\\d{4}$",
-                "Telefone inválido. Por favor, insira um telefone válido."
-        );
-        return regexValidator.validateInput(sc);
+        String request = "Insira seu Telefone (formato +XX (XX) 9XXXX-XXXX): ";
+        String regex = "^\\+\\d{2}\\s\\(\\d{2}\\)\\s9\\d{4}-\\d{4}$";
+        String errorMessage = "Telefone inválido. Por favor, insira um telefone válido.";
+        return regexValidator(sc, request, regex, errorMessage);
     }
 
     private static String obterSenha(Scanner sc) {
@@ -319,17 +310,15 @@ public class Main {
     }
 
     private static String obterEmail(Scanner sc) {
-        RegexValidator regexValidator = new RegexValidator(
-                "Insira seu E-mail: ",
-                "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
-                "E-mail inválido. Por favor, insira um e-mail válido."
-        );
-        return regexValidator.validateInput(sc);
+        String request = "Insira seu E-mail: ";
+        String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        String errorMessage = "E-mail inválido. Por favor, insira um e-mail válido.";
+        return regexValidator(sc, request, regex, errorMessage);
     }
 
     private static String obterNome(Scanner sc) {
-        MaxLengthValidator validator = new MaxLengthValidator("Insira seu Nome e Sobrenome: ", 100);
-        return validator.validateInput(sc);
+        String request = "Insira seu Nome e Sobrenome: ";
+        return maxLengthValidator(sc, request, 100);
     }
 
     private static String gerarHashUsuario(String emailCliente, String senhaCliente) {
@@ -357,7 +346,9 @@ public class Main {
     }
 
     private static void cadastrarImovel(Scanner sc, Cliente cliente) {
-        String tituloImovel = obterTituloImovel(sc);
+        String requestTitulo = "Titulo a ser exibido (máximo de 100 caracteres): ";
+        String tituloImovel = maxLengthValidator(sc, requestTitulo, 100);
+
         String descricaoImovel = obterDescricaoImovel(sc);
         int numeroDeQuartosImovel = obterNumeroDeQuartos(sc);
         int numeroDeBanheirosImovel = obterNumeroDeBanheiros(sc);
@@ -395,64 +386,54 @@ public class Main {
     }
 
     private static Endereco obterEnderecoImovel(Scanner sc) {
-        String logradouro = obterLogradouroImovel(sc);
-        String numeroImovel = obterNumeroImovel(sc);
-        String complemento = obterComplementoEndereco(sc);
-        String bairro = obterBairroImovel(sc);
-        String cidade = obterCidadeImovel(sc);
+        String requestLogradouro = "Logradouro (máximo de 100 caracteres): ";
+        String logradouro = maxLengthValidator(sc, requestLogradouro, 100);
+
+        String requestNumero = "Número do imóvel (máximo de 4 caracteres): ";
+        String numeroImovel = maxLengthValidator(sc, requestNumero, 4);
+
+        String requestBairro = "Bairro (máximo de 50 caracteres): ";
+        String bairro = maxLengthValidator(sc, requestBairro, 50);
+
+        String requestComplemento = "Complemento (máximo de 100 caracteres): ";
+        String complemento = maxLengthValidator(sc, requestComplemento, 100);
+
+        String requestCidade = "Cidade (máximo de 50 caracteres): ";
+        String cidade = maxLengthValidator(sc, requestCidade, 50);
+
         String estado = EstadoSeletor.selecionarEstado(sc);
-        String cep = obterCepImovel(sc);
+
+        String requestCep = "CEP (formato XXXXX-XX): ";
+        String regexCep = "\\d{5}-\\d{3}";
+        String errorMessageCep = "CEP inválido. Por favor, insira um CEP válido.";
+        String cep = regexValidator(sc, requestCep, regexCep, errorMessageCep);
 
         return new Endereco(logradouro, numeroImovel, complemento, bairro, cidade, estado, cep);
     }
 
-    private static String obterCepImovel(Scanner sc) {
-        RegexValidator regexValidator = new RegexValidator(
-                "CEP (formato XXXXX-XX): ",
-                "\\d{5}-\\d{3}",
-                "CEP inválido. Por favor, insira um CEP válido."
-        );
-        return regexValidator.validateInput(sc);
+    private static String maxLengthValidator(Scanner sc, String request, int maxLength) {
+        String input;
+        do{
+            System.out.print("║ ║ ║   " + request);
+            input = sc.nextLine().trim();
+            if (input.length() > maxLength) {
+                System.out.println("║ ║ ║   >Número de caracteres excedido.");
+            }
+        } while (input.length() > maxLength);
+        return input;
     }
 
-    private static String obterCidadeImovel(Scanner sc) {
-        MaxLengthValidator validator = new MaxLengthValidator(
-                "Cidade (máximo de 50 caracteres): ",
-                50
-        );
-        return validator.validateInput(sc);
-    }
+    private static String regexValidator(Scanner sc, String request, String regex, String errorMessage) {
+        String input;
+        do {
+            System.out.print("║ ║ ║   " + request);
+            input = sc.nextLine().trim();
+            if (!input.matches(regex)) {
+                System.out.println("║ ║ ║   >" + errorMessage);
+            }
+        } while (!input.matches(regex));
 
-    private static String obterBairroImovel(Scanner sc) {
-        MaxLengthValidator validator = new MaxLengthValidator(
-                "Bairro (máximo de 50 caracteres): ",
-                50
-        );
-        return validator.validateInput(sc);
-    }
-
-    private static String obterComplementoEndereco(Scanner sc) {
-        MaxLengthValidator validator = new MaxLengthValidator(
-                "Complemento (máximo de 100 caracteres): ",
-                100
-        );
-        return validator.validateInput(sc);
-    }
-
-    private static String obterNumeroImovel(Scanner sc) {
-        MaxLengthValidator validator = new MaxLengthValidator(
-                "Número do imóvel (máximo de 4 caracteres): ",
-                4
-        );
-        return validator.validateInput(sc);
-    }
-
-    private static String obterLogradouroImovel(Scanner sc) {
-        MaxLengthValidator validator = new MaxLengthValidator(
-                "Logradouro (máximo de 100 caracteres): ",
-                100
-        );
-        return validator.validateInput(sc);
+        return input;
     }
 
     private static BigDecimal obterValorImovel(Scanner sc) {
@@ -496,14 +477,6 @@ public class Main {
         } while (descricaoImovel.length() > 5000);
 
         return descricaoImovel;
-    }
-
-    private static String obterTituloImovel(Scanner sc) {
-        MaxLengthValidator maxLengthValidator = new MaxLengthValidator(
-                "Titulo a ser exibido (máximo de 100 caracteres): ",
-                100
-        );
-        return maxLengthValidator.validateInput(sc);
     }
 
     private static int obterOpcao(Scanner sc, String nivel) {

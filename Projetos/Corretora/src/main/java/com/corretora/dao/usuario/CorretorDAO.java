@@ -1,7 +1,7 @@
-package com.corretora.dao;
+package com.corretora.dao.usuario;
 
 import com.corretora.conexao.ConexaoMySQL;
-import com.corretora.model.Corretor;
+import com.corretora.model.user.Corretor;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -71,11 +71,8 @@ public class CorretorDAO extends ConexaoMySQL<Corretor> {
         return sucesso;
     }
 
-    public boolean verificarEmailCadastrado(String email) {
-        connect();
-        String sql = "SELECT COUNT(*) AS email_count FROM corretor WHERE email = ?";
-
-        return verificaEmailNoBD(email, sql);
+    @Override
+    protected String buildCountQuery(String campo) {
+        return "SELECT COUNT(*) AS count FROM corretor WHERE " + campo + " = ?";
     }
-
 }

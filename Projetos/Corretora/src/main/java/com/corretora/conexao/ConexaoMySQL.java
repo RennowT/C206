@@ -109,15 +109,19 @@ public abstract class ConexaoMySQL<T> {
 
     protected abstract String buildSelectQuery(String campo);
 
-    public boolean verificaEmailNoBD(String email, String sql) {
+    public boolean verificar(String campo, String valor) {
+        connect();
+
+        String sql = buildCountQuery(campo);
         boolean sucesso = false;
+
         try {
             pst = connection.prepareStatement(sql);
-            pst.setString(1, email);
+            pst.setString(1, valor);
             resultSet = pst.executeQuery();
 
             resultSet.next();
-            int count = resultSet.getInt("email_count");
+            int count = resultSet.getInt("count");
             sucesso = count > 0;
 
         } catch (SQLException e) {
@@ -127,5 +131,8 @@ public abstract class ConexaoMySQL<T> {
         }
 
         return sucesso;
+
     }
+
+    protected abstract String buildCountQuery(String campo);
 }

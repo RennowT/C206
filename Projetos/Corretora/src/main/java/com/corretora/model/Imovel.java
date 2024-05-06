@@ -1,6 +1,6 @@
-package com.corretora.model.imovel;
+package com.corretora.model;
 
-import com.corretora.model.Endereco.Endereco;
+import com.corretora.model.imovel.Endereco;
 
 import java.math.BigDecimal;
 
